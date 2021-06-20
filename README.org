@@ -1,0 +1,42 @@
+* Handling missing values
+There are *27 columns containing missing values*. I investigated on the number of null values of each column to decide which way to handle null values for them. 
+- For columns which of most are null, drop them: Alley :              2459 , Pool QC :            2627, Fence :           2118, Misc Feature :       2543
+- For columns which have a value of 'typical'/'average', we impute nulls into that value
+- For Zoning, I fill nulls based on MS SubClass that it belongs to
+- For Lot Frontage, I fill nulls based on Neighborhood that it belongs to
+- For the rest, we replace nulls in categorical columns by "None", and in numerical columns by 0 
+
+* Transforming data
+- Some of the non-numeric columns (i.e. 'MS SubClass', 'Yr Sold', 'Mo Sold') are stored as numbers, convert them into strings
+- Drop columns which most cells fall into one value 
+- Also drop PID because it does not serve any analysis purpose
+- Finally, apply dummy transformation to all the categorical variables after handling the missing values
+- Since SalePrice is highly skewed, I applied log transform to it to make it more normally distributed.
+
+
+* Hyper-parameter tuning
+For each model, we use *GridSearchCV, scoring = 'neg_mean_absolute_error'*. For Lasso and Ridge, I only paid attention to alpha, while for Elastic Net, we tune l1_ratio and alpha. I tried to find alpha that minimise mean absolute error by plotting the graph of -MAE versus alpha (see in img folder). And then choose the range of alpha that makes MAE reaches global minimum as input of GridSearchCV. *Result*:
+- Lasso regression: Lasso (alpha=0.0004)
+- Ridge regression: Ridge (alpha=24.1)
+- Elastic Net: ElasticNet(alpha=0.0006, l1_ratio=0.7)
+
+* Model evaluation
+MAE of Lasso:  15873.168268169828.
+MAE of Ridge:  15746.741436827477.
+MAE of Elastic Net:  15868.680141272265.
+
+MSE of Lasso:  3559971719.1558194.
+MSE of Ridge:  3129053247.573111.
+MSE of Elastic Net:  3544566441.0478115.
+
+R2 of Lasso:  0.44740831344721044.
+R2 of Ridge:  0.5142970372247986.
+R2 of Elastic Net:  0.44979957643554047.
+
+Based on above evaluation, it is clear that *Ridge (alpha=24.1)* performs best.
+
+* Learning curve
+The learning curves of Lasso and Elastic Net clearly show overfitting problem, while the learning curve of Ridge suggests that the two curves come close when training set size is over 100. 
+
+* Thought
+I spent a lot of time handling missing values and working on categorical variables, which I believe the hardest part of the assignment. Hyper-parameter tuning took less time than I thought, since it was pretty straightforward. 
