@@ -37,6 +37,3 @@ Based on above evaluation, it is clear that *Ridge (alpha=24.1)* performs best.
 
 * Learning curve
 The learning curves of Lasso and Elastic Net clearly show overfitting problem, while the learning curve of Ridge suggests that the two curves come close when training set size is over 100. 
-
-* Thought
-I spent a lot of time handling missing values and working on categorical variables, which I believe the hardest part of the assignment. Hyper-parameter tuning took less time than I thought, since it was pretty straightforward. 
