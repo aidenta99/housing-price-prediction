@@ -14,7 +14,7 @@ There are *27 columns containing missing values*. I investigated on the number o
 - Since SalePrice is highly skewed, I applied log transform to it to make it more normally distributed.
 
 * Hyper-parameter tuning
-For each model, we use **GridSearchCV, scoring = 'neg_mean_absolute_error'**. For Lasso and Ridge, I only paid attention to alpha, while for Elastic Net, we tune l1_ratio and alpha. I tried to find alpha that minimise mean absolute error by plotting the graph of -MAE versus alpha (see in img folder). And then choose the range of alpha that makes MAE reaches global minimum as input of GridSearchCV. *Result*:
+For each model, we use GridSearchCV, with scoring = 'neg_mean_absolute_error'. For Lasso and Ridge, I only paid attention to alpha, while for Elastic Net, we tune l1_ratio and alpha. I tried to find alpha that minimise mean absolute error by plotting the graph of -MAE versus alpha (see in img folder). And then choose the range of alpha that makes MAE reaches global minimum as input of GridSearchCV. *Result*:
 - Lasso regression: Lasso (alpha=0.0004)
 - Ridge regression: Ridge (alpha=24.1)
 - Elastic Net: ElasticNet(alpha=0.0006, l1_ratio=0.7)
