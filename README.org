@@ -20,9 +20,9 @@ For each model, we use GridSearchCV, with scoring = 'neg_mean_absolute_error'. F
 - Elastic Net: ElasticNet(alpha=0.0006, l1_ratio=0.7)
 
 * Model evaluation
-- MAE of Lasso:  15873.168268169828.
-- MAE of Ridge:  15746.741436827477.
-- MAE of Elastic Net:  15868.680141272265.
+- MAE of Lasso:  15873.16
+- MAE of Ridge:  15746.74
+- MAE of Elastic Net:  15868.68
 
 - MSE of Lasso:  3559971719.1558194.
 - MSE of Ridge:  3129053247.573111.
