@@ -20,17 +20,13 @@ For each model, we use GridSearchCV, with scoring = 'neg_mean_absolute_error'. F
 - Elastic Net: ElasticNet(alpha=0.0006, l1_ratio=0.7)
 
 * Model evaluation
-- MAE of Lasso:  15873.16
-- MAE of Ridge:  15746.74
-- MAE of Elastic Net:  15868.68
+- MSE of Lasso:  158.16
+- MAE of Ridge:  157.74
+- MAE of Elastic Net:  158.68
 
-- MSE of Lasso:  3559971719.15
-- MSE of Ridge:  3129053247.57
-- MSE of Elastic Net:  3544566441.04
-
-- R2 of Lasso:  0.44
-- R2 of Ridge:  0.51
-- R2 of Elastic Net:  0.44
+- R2 of Lasso:  0.64
+- R2 of Ridge:  0.71
+- R2 of Elastic Net:  0.54
 
 Based on above evaluation, it is clear that *Ridge (alpha=24.1)* performs best.
 
