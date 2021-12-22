@@ -37,6 +37,13 @@ features['MS SubClass'] = features['MS SubClass'].apply(str)
 features['Yr Sold'] = features['Yr Sold'].astype(str)
 features['Mo Sold'] = features['Mo Sold'].astype(str)
 
+# Add binary features
+features['haspool'] = features['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+features['has2ndfloor'] = features['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
+features['hasgarage'] = features['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
+features['hasbsmt'] = features['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
+features['hasfireplace'] = features['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
+
 # Handle missing values in other columns
 
 # For features which has a value of 'typical'/'average', we impute nulls into that value
