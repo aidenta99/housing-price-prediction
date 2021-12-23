@@ -1,4 +1,4 @@
-from data_cleaning import final_features
+from feature-engineering import final_df
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,12 +9,13 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 target_column = "SalePrice"
 
 # Split data into training and testing set
-X_train, X_test, y_train, y_test = train_test_split(
-    final_features.drop(columns=target_column), final_features[target_column]
+X_train, X_val, y_train, y_val = train_test_split(
+    df.drop(columns=target_column), final_df[target_column]
 )
 
 # Log transform Sale Price
@@ -106,8 +107,6 @@ tpred_lasso = gs_lasso.best_estimator_.predict(X_test)
 tpred_ridge = gs_ridge.best_estimator_.predict(X_test)
 tpred_en = gs_en.best_estimator_.predict(X_test)
 
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-
 print("MAE of Lasso: ", mean_absolute_error(y_test, np.exp(tpred_lasso)))
 print("MAE of Ridge: ", mean_absolute_error(y_test, np.exp(tpred_ridge)))
 print("MAE of Elastic Net: ", mean_absolute_error(y_test, np.exp(tpred_en)))
@@ -116,8 +115,49 @@ print("R2 of Lasso: ", r2_score(y_test, np.exp(tpred_lasso)))
 print("R2 of Ridge: ", r2_score(y_test, np.exp(tpred_ridge)))
 print("R2 of Elastic Net: ", r2_score(y_test, np.exp(tpred_en)))
 
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import RobustScaler
+# XG Boost Regressor
+xg_reg = xgb.XGBRegressor()
+xg_reg.fit(X_train,y_train)
+joblib.dump(xg_reg, "xgreg.pkl")
 
-# Through evaluating MSE, MAE and R^2, it is clear that Ridge works best among the four models
-chosen_model = Ridge(alpha=24.1)
+# Hyperparameter tuning
+# Hyperparameter tuning
+from hyperopt import STATUS_OK, Trials, fmin, hp, tpe
+
+space={'max_depth': hp.quniform("max_depth", 3, 18, 1),
+        'gamma': hp.uniform ('gamma', 1,9),
+        'reg_alpha' : hp.quniform('reg_alpha', 40,180,1),
+        'reg_lambda' : hp.uniform('reg_lambda', 0,1),
+        'colsample_bytree' : hp.uniform('colsample_bytree', 0.5,1),
+        'min_child_weight' : hp.quniform('min_child_weight', 0, 10, 1),
+        'n_estimators': 180,
+        'seed': 0
+    }
+
+def objective(space):
+    reg = xgb.XGBRegressor(n_estimators =space['n_estimators'], 
+                           max_depth = int(space['max_depth']),
+                           gamma = space['gamma'], 
+                           reg_alpha = int(space['reg_alpha']),
+                           min_child_weight=int(space['min_child_weight']),
+                           colsample_bytree=int(space['colsample_bytree']))
+
+    eval_set  = [(X_train, y_train), (X_val, y_val)]
+
+    reg.fit(X_train, y_train, eval_set=eval_set, eval_metric = 'rmse',
+            early_stopping_rounds=10,verbose=False)
+    val_pred = reg.predict(X_val)
+    mse = mean_squared_error(y_val, val_pred)
+    return{'loss':mse, 'status': STATUS_OK }
+
+trials = Trials()
+best_hyperparams = fmin(fn=objective,
+            space=space,
+            algo=tpe.suggest,
+            max_evals=100,
+            trials=trials)
+
+print(best_hyperparams)
+
+print("The best hyperparameters are : ","\n")
+print(best_hyperparams)
